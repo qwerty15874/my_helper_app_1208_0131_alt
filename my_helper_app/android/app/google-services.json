@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "668922428264",
+    "firebase_url": "https://bandi-final-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "bandi-final",
+    "storage_bucket": "bandi-final.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668922428264:android:cd081cf310b5a3512074dd",
+        "android_client_info": {
+          "package_name": "com.example.my_helper_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgLDf7g-r2BeXC9vuIaT2gS57NCO3d-JQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
