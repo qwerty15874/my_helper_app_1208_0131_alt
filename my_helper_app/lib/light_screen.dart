@@ -55,7 +55,7 @@ class _LightScreenState extends State<LightScreen> {
           SizedBox(width: 300, height: 80, child: ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40))),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ThirdLightScreen())),
-            child: const Text("3차 조명 켜기 >", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            child: const Text("보조 조명 켜기 >", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           )),
         ])),
       ]),
