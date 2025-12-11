@@ -41,54 +41,52 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCbRC06FikF4u76EtTeaXA_QYm7nhmeTbk',
-    appId: '1:321939028016:web:b06590a1d8d4ee21b315f5',
-    messagingSenderId: '321939028016',
-    projectId: 'bandi-server-db80b',
-    authDomain: 'bandi-server-db80b.firebaseapp.com',
-    databaseURL: 'https://bandi-server-db80b-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'bandi-server-db80b.firebasestorage.app',
-    measurementId: 'G-06075V6JEC',
+    apiKey: 'AIzaSyAlZlKdgw5FtdPAMkLXjl1Hr6GY209X-Zw',
+    appId: '1:668922428264:web:0da0afbb448fd7d42074dd',
+    messagingSenderId: '668922428264',
+    projectId: 'bandi-final',
+    authDomain: 'bandi-final.firebaseapp.com',
+    databaseURL: 'https://bandi-final-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'bandi-final.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCx1vDri3ZMQmd1wDAJoVn1pKdvtkWiP0E',
-    appId: '1:321939028016:android:b65def261895e741b315f5',
-    messagingSenderId: '321939028016',
-    projectId: 'bandi-server-db80b',
-    databaseURL: 'https://bandi-server-db80b-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'bandi-server-db80b.firebasestorage.app',
+    apiKey: 'AIzaSyBgLDf7g-r2BeXC9vuIaT2gS57NCO3d-JQ',
+    appId: '1:668922428264:android:cd081cf310b5a3512074dd',
+    messagingSenderId: '668922428264',
+    projectId: 'bandi-final',
+    databaseURL: 'https://bandi-final-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'bandi-final.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBu5W2Hff589a4aZYL2rjmXaWU7to9ny1s',
-    appId: '1:321939028016:ios:26c1d675eea8ed93b315f5',
-    messagingSenderId: '321939028016',
-    projectId: 'bandi-server-db80b',
-    databaseURL: 'https://bandi-server-db80b-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'bandi-server-db80b.firebasestorage.app',
+    apiKey: 'AIzaSyCHj_9ZzyGo5hTdgFZRcHFm-tigbdD5uLY',
+    appId: '1:668922428264:ios:417d540a2f5edacf2074dd',
+    messagingSenderId: '668922428264',
+    projectId: 'bandi-final',
+    databaseURL: 'https://bandi-final-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'bandi-final.firebasestorage.app',
     iosBundleId: 'com.example.myHelperApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBu5W2Hff589a4aZYL2rjmXaWU7to9ny1s',
-    appId: '1:321939028016:ios:26c1d675eea8ed93b315f5',
-    messagingSenderId: '321939028016',
-    projectId: 'bandi-server-db80b',
-    databaseURL: 'https://bandi-server-db80b-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'bandi-server-db80b.firebasestorage.app',
+    apiKey: 'AIzaSyCHj_9ZzyGo5hTdgFZRcHFm-tigbdD5uLY',
+    appId: '1:668922428264:ios:417d540a2f5edacf2074dd',
+    messagingSenderId: '668922428264',
+    projectId: 'bandi-final',
+    databaseURL: 'https://bandi-final-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'bandi-final.firebasestorage.app',
     iosBundleId: 'com.example.myHelperApp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCbRC06FikF4u76EtTeaXA_QYm7nhmeTbk',
-    appId: '1:321939028016:web:6a24fcd3a2255d24b315f5',
-    messagingSenderId: '321939028016',
-    projectId: 'bandi-server-db80b',
-    authDomain: 'bandi-server-db80b.firebaseapp.com',
-    databaseURL: 'https://bandi-server-db80b-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'bandi-server-db80b.firebasestorage.app',
-    measurementId: 'G-1VMNNYEJ3D',
+    apiKey: 'AIzaSyAlZlKdgw5FtdPAMkLXjl1Hr6GY209X-Zw',
+    appId: '1:668922428264:web:0da0afbb448fd7d42074dd',
+    messagingSenderId: '668922428264',
+    projectId: 'bandi-final',
+    authDomain: 'bandi-final.firebaseapp.com',
+    databaseURL: 'https://bandi-final-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'bandi-final.firebasestorage.app',
   );
 
 }
