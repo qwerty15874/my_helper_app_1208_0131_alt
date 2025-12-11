@@ -1,22 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'firebase_options.dart';
+import 'home_screen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  WidgetsFlutterBinding.ensureInitialized(); // 플러터 설정 초기화
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform); // 파이어베이스 연결
+
+  // ★ 이 코드가 있어야만 토큰이 보입니다!
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+  // ignore: avoid_print
+  print("============================================");
+  // ignore: avoid_print
+  print("내 폰 토큰: $fcmToken");
+  // ignore: avoid_print
+  print("============================================");
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MISO Status',
-      theme: ThemeData.dark(),
-      home: const StatusPage(),
+      debugShowCheckedModeBanner: false,
+      title: '반디',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'Pretendard',
+      ),
+      home: const HomeScreen(),
+      routes: {
+        // 상태 확인용 별도 화면 (기존 UI와 디자인은 그대로 유지)
+        '/status': (_) => const StatusPage(),
+      },
     );
   }
 }
