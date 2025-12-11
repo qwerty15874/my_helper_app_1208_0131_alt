@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'firebase_options.dart';
 import 'home_screen.dart';
+import 'command_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // 플러터 설정 초기화
@@ -73,6 +74,37 @@ class StatusPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => CommandService.setTracking(true),
+                      child: const Text('추적 시작'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => CommandService.setTracking(false),
+                      child: const Text('추적 정지'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => CommandService.setMainLight(true),
+                      child: const Text('메인 ON'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => CommandService.setMainLight(false),
+                      child: const Text('메인 OFF'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => CommandService.setSubLight(true),
+                      child: const Text('서브 ON'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => CommandService.setSubLight(false),
+                      child: const Text('서브 OFF'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
                 _StatusTile('추적', tracking),
                 _StatusTile('사람 감지', detected),
                 _StatusTile('메인 조명', mainLight),

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'report_done_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'command_service.dart';
 
 class ThirdLightScreen extends StatelessWidget {
   const ThirdLightScreen({super.key});
+  static bool _subOn = false; // simple toggle state shared across rebuilds
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,10 +24,8 @@ class ThirdLightScreen extends StatelessWidget {
           SizedBox(width: 300, height: 80, child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40))),
             onPressed: () {
-              // 왼쪽 조명 활성화 신호 보냄
-              FirebaseFirestore.instance.collection('iot').doc('light_control').set({
-                'left_on': true, 
-              }, SetOptions(merge: true));
+              _subOn = !_subOn;
+              CommandService.setSubLight(_subOn);
             },
             label: const Text("조명 켜기", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           )),

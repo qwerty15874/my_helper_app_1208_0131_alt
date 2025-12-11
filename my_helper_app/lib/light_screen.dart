@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'third_light_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'command_service.dart';
 
-class LightScreen extends StatelessWidget {
+class LightScreen extends StatefulWidget {
   const LightScreen({super.key});
+
+  @override
+  State<LightScreen> createState() => _LightScreenState();
+}
+
+class _LightScreenState extends State<LightScreen> {
+  bool _mainOn = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,10 +29,8 @@ class LightScreen extends StatelessWidget {
           SizedBox(width: 300, height: 80, child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40))),
             onPressed: () {
-              // 오른쪽 조명 활성화 신호 보냄
-              FirebaseFirestore.instance.collection('iot').doc('light_control').set({
-                'right_on': true, 
-              }, SetOptions(merge: true)); // 다른 값은 건드리지 않음
+              setState(() => _mainOn = !_mainOn);
+              CommandService.setMainLight(_mainOn);
             },
             label: const Text("조명 켜기", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           )),
