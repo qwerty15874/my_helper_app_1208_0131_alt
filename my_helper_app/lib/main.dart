@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'firebase_options.dart';
 import 'home_screen.dart';
-import 'alert_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // 플러터 설정 초기화
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform); // 파이어베이스 연결
-
-  // 알림 서비스 초기화 및 status alert 구독
-  await AlertService.instance.init();
-  AlertService.instance.start();
 
   // ★ 이 코드가 있어야만 토큰이 보입니다!
   final fcmToken = await FirebaseMessaging.instance.getToken();
