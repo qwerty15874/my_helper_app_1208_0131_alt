@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:intl/intl.dart';
@@ -7,9 +7,11 @@ import 'package:intl/intl.dart';
 class VideoScreen extends StatelessWidget {
   const VideoScreen({super.key});
 
-  String formatTimestamp(Timestamp? timestamp) {
-    if (timestamp == null) return "날짜 정보 없음";
-    return DateFormat('yyyy년 MM월 dd일 HH:mm').format(timestamp.toDate());
+  String formatTs(int? ts) {
+    if (ts == null) return "날짜 정보 없음";
+    return DateFormat('yyyy년 MM월 dd일 HH:mm').format(
+      DateTime.fromMillisecondsSinceEpoch(ts * 1000),
+    );
   }
 
   @override
@@ -49,37 +51,55 @@ class VideoScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('videos').orderBy('timestamp', descending: true).snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) return const Center(child: Text("저장된 영상이 없습니다.", style: TextStyle(color: Colors.grey)));
+      body: StreamBuilder<DatabaseEvent>(
+          stream: FirebaseDatabase.instance.ref('events').onValue,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (!snapshot.hasData || snapshot.data?.snapshot.value == null) {
+              return const Center(child: Text("저장된 영상이 없습니다.", style: TextStyle(color: Colors.grey)));
+            }
+            final raw = snapshot.data!.snapshot.value as Map;
+            final items = raw.entries.map((e) {
+              final m = (e.value as Map).map((k, v) => MapEntry(k.toString(), v));
+              return {
+                'url': m['url'] ?? '',
+                'path': m['path'] ?? '',
+                'timestamp': (m['timestamp'] is int) ? m['timestamp'] as int : int.tryParse('${m['timestamp']}'),
+              };
+            }).toList();
+            items.sort((a, b) => (b['timestamp'] ?? 0).compareTo(a['timestamp'] ?? 0));
 
-          return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) {
-              var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-              String filename = data['filename'] ?? '알 수 없는 파일';
-              String url = data['url'] ?? '';
-              
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                elevation: 1,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  leading: const CircleAvatar(backgroundColor: Colors.black12, child: Icon(Icons.play_arrow, color: Colors.black)),
-                  title: Text(formatTimestamp(data['timestamp']), style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text(filename, overflow: TextOverflow.ellipsis),
-                  onTap: () {
-                    if (url.isNotEmpty) Navigator.push(context, MaterialPageRoute(builder: (_) => PlayerScreen(url: url, filename: filename)));
-                  },
-                ),
-              );
-            },
-          );
-        },
-      ),
+            if (items.isEmpty) {
+              return const Center(child: Text("저장된 영상이 없습니다.", style: TextStyle(color: Colors.grey)));
+            }
+
+            return ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final data = items[index];
+                final url = data['url'] ?? '';
+                final ts = data['timestamp'];
+                final filename = data['path'] ?? '알 수 없는 파일';
+
+                return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    leading: const CircleAvatar(backgroundColor: Colors.black12, child: Icon(Icons.play_arrow, color: Colors.black)),
+                    title: Text(formatTs(ts), style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(filename, overflow: TextOverflow.ellipsis),
+                    onTap: () {
+                      if (url.isNotEmpty) Navigator.push(context, MaterialPageRoute(builder: (_) => PlayerScreen(url: url, filename: filename)));
+                    },
+                  ),
+                );
+              },
+            );
+          }),
     );
   }
 }
