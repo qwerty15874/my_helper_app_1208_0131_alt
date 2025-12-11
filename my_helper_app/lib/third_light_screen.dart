@@ -2,12 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'report_done_screen.dart';
 import 'command_service.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class ThirdLightScreen extends StatelessWidget {
   const ThirdLightScreen({super.key});
   static bool _subOn = false; // simple toggle state shared across rebuilds
+  static bool _mainOn = false;
+
+  void _listenStatus() {
+    FirebaseDatabase.instance.ref('status').onValue.listen((event) {
+      final val = event.snapshot.value;
+      if (val is Map) {
+        _subOn = val['sub_light'] == true;
+        _mainOn = val['main_light'] == true;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    _listenStatus();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white, foregroundColor: Colors.black, elevation: 0, titleSpacing: 0,
@@ -69,6 +83,19 @@ class ThirdLightScreen extends StatelessWidget {
           )),
         ])),
       ]),
+      floatingActionButton: (_mainOn || _subOn)
+          ? FloatingActionButton.extended(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              icon: const Icon(Icons.power_settings_new),
+              label: const Text("모두 끄기"),
+              onPressed: () {
+                _subOn = false;
+                CommandService.setSubLight(false);
+                CommandService.setMainLight(false);
+              },
+            )
+          : null,
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'third_light_screen.dart';
 import 'command_service.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class LightScreen extends StatefulWidget {
   const LightScreen({super.key});
@@ -11,6 +12,19 @@ class LightScreen extends StatefulWidget {
 
 class _LightScreenState extends State<LightScreen> {
   bool _mainOn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseDatabase.instance.ref('status').onValue.listen((event) {
+      final val = event.snapshot.value;
+      if (val is Map) {
+        setState(() {
+          _mainOn = val['main_light'] == true;
+        });
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +73,19 @@ class _LightScreenState extends State<LightScreen> {
           )),
         ])),
       ]),
+      floatingActionButton: _mainOn
+          ? FloatingActionButton.extended(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              icon: const Icon(Icons.power_settings_new),
+              label: const Text("모두 끄기"),
+              onPressed: () {
+                setState(() => _mainOn = false);
+                CommandService.setMainLight(false);
+                CommandService.setSubLight(false);
+              },
+            )
+          : null,
     );
   }
 }
