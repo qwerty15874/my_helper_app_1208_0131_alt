@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 
 class VideoScreen extends StatelessWidget {
   const VideoScreen({super.key});
@@ -50,6 +51,41 @@ class VideoScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.delete_outline),
+        label: const Text("영상 전체 삭제"),
+        onPressed: () async {
+          final confirmed = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text("전체 삭제"),
+              content: const Text("모든 녹화 목록을 삭제할까요? (되돌릴 수 없음)"),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("취소")),
+                TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text("삭제", style: TextStyle(color: Colors.red))),
+              ],
+            ),
+          );
+          if (confirmed == true) {
+            try {
+              await FirebaseDatabase.instance.ref('events').remove();
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("영상 목록을 모두 삭제했습니다.")),
+                );
+              }
+            } catch (e) {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("삭제 실패: $e")),
+                );
+              }
+            }
+          }
+        },
       ),
       body: StreamBuilder<DatabaseEvent>(
           stream: FirebaseDatabase.instance.ref('events').onValue,

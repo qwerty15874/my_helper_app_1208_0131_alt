@@ -19,4 +19,8 @@ class CommandService {
   static Future<void> setSubLight(bool on) {
     return _commandsRef.update({'sub_light': on ? 'ON' : 'OFF'});
   }
+
+  static Future<void> allLightsOff() {
+    return _commandsRef.update({'main_light': 'OFF', 'sub_light': 'OFF'});
+  }
 }

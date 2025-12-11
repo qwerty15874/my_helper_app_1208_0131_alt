@@ -34,6 +34,23 @@ class _LightScreenState extends State<LightScreen> {
             },
             label: const Text("조명 켜기", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           )),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: 300,
+            height: 60,
+            child: TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: Colors.grey.shade200,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              ),
+              onPressed: () {
+                setState(() => _mainOn = false);
+                CommandService.setMainLight(false);
+              },
+              child: const Text("조명 끄기", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            ),
+          ),
           const SizedBox(height: 20),
           SizedBox(width: 300, height: 80, child: ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40))),
