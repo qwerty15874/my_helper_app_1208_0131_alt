@@ -37,37 +37,41 @@ class _LightScreenState extends State<LightScreen> {
       ),
       body: Column(children: [
         const SizedBox(height: 0),
-        Image.asset('assets/light3.png', width: 300, height: 300),
-        const SizedBox(height: 20),
+        Image.asset(
+          _mainOn ? 'assets/light.png' : 'assets/light1.png',
+          width: 300,
+          height: 300,
+        ),
+        const SizedBox(height: 15),
         Center(child: Column(children: [
           SizedBox(width: 300, height: 80, child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40))),
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1F1F1F), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40))),
             onPressed: () {
               setState(() => _mainOn = !_mainOn);
               CommandService.setMainLight(_mainOn);
             },
             label: const Text("조명 켜기", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           )),
-          const SizedBox(height: 12),
+          const SizedBox(height: 15),
           SizedBox(
             width: 300,
-            height: 60,
+            height: 80,
             child: TextButton(
               style: TextButton.styleFrom(
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.grey.shade200,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                foregroundColor: Colors.white,
+                backgroundColor: const Color(0xFF1F1F1F),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
               ),
               onPressed: () {
                 setState(() => _mainOn = false);
                 CommandService.setMainLight(false);
               },
-              child: const Text("조명 끄기", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+              child: const Text("조명 끄기", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
           SizedBox(width: 300, height: 80, child: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40))),
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1F1F1F), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40))),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ThirdLightScreen())),
             child: const Text("보조 조명 켜기 >", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           )),
@@ -75,7 +79,7 @@ class _LightScreenState extends State<LightScreen> {
       ]),
       floatingActionButton: _mainOn
           ? FloatingActionButton.extended(
-              backgroundColor: Colors.black,
+              backgroundColor: const Color(0xFF1F1F1F),
               foregroundColor: Colors.white,
               icon: const Icon(Icons.power_settings_new),
               label: const Text("모두 끄기"),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -21,12 +22,16 @@ final AndroidNotificationChannel alertChannel = AndroidNotificationChannel(
   vibrationPattern: Int64List.fromList([0, 500, 300, 500]),
 );
 
+StreamSubscription<DatabaseEvent>? _statusAlertSub;
+bool _lastAlertOn = false;
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // 플러터 설정 초기화
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await _initLocalNotifications();
   await _initFirebaseMessaging(); // 파이어베이스 연결
+  await _listenRealtimeAlert();
 
   // ★ 이 코드가 있어야만 토큰이 보입니다!
   final fcmToken = await FirebaseMessaging.instance.getToken();
@@ -43,7 +48,6 @@ void main() async {
 Future<void> _initFirebaseMessaging() async {
   await FirebaseMessaging.instance.requestPermission();
   await FirebaseMessaging.instance.subscribeToTopic('alert');
-  FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
 }
 
 Future<void> _initLocalNotifications() async {
@@ -57,14 +61,20 @@ Future<void> _initLocalNotifications() async {
   await androidImpl?.createNotificationChannel(alertChannel);
 }
 
-void _handleForegroundMessage(RemoteMessage message) {
-  final alertRaw = message.data['alert'];
-  final isAlert = alertRaw == true || alertRaw == 'true' || alertRaw == '1';
-  if (!isAlert) return;
+Future<void> _listenRealtimeAlert() async {
+  await _statusAlertSub?.cancel();
+  final ref = FirebaseDatabase.instance.ref('status/alert');
+  _statusAlertSub = ref.onValue.listen((event) {
+    final raw = event.snapshot.value;
+    final isAlert = raw == true || raw == 'true' || raw == 1 || raw == '1';
+    if (isAlert && !_lastAlertOn) {
+      _showAlertNotification('🚨 침입자 감지', '녹화를 시작했습니다.');
+    }
+    _lastAlertOn = isAlert;
+  });
+}
 
-  final title = message.notification?.title ?? 'Alert';
-  final body = message.notification?.body ?? 'status/alert = true';
-
+void _showAlertNotification(String title, String body) {
   localNotifications.show(
     0,
     title,

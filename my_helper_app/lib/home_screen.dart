@@ -34,7 +34,7 @@ class HomeScreen extends StatelessWidget {
       width: 300, height: 80,
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black, foregroundColor: Colors.white,
+          backgroundColor: const Color(0xFF1F1F1F), foregroundColor: Colors.white,
           alignment: Alignment.center, padding: const EdgeInsets.symmetric(horizontal: 20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
         ),

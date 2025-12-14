@@ -85,8 +85,6 @@ flutter:
      - assets/light.png
      - assets/light1.png
      - assets/light2.png
-     - assets/light4.png
-     - assets/light3.png
   #   - images/a_dot_ham.jpeg
   fonts:
     - family: Pretendard  # 앞으로 이 폰트를 'Pretendard'라고 부르겠다

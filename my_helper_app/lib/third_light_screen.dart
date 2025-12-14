@@ -26,13 +26,13 @@ class ThirdLightScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white, foregroundColor: Colors.black, elevation: 0, titleSpacing: 0,
         title: Stack(alignment: Alignment.center, children: [
-          const Align(alignment: Alignment.centerLeft, child: Padding(padding: EdgeInsets.only(left: 0), child: Text("3차 조명 켜기", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)))),
+          const Align(alignment: Alignment.centerLeft, child: Padding(padding: EdgeInsets.only(left: 0), child: Text("보조 조명 켜기", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)))),
           Padding(padding: const EdgeInsets.only(right: 50), child: Image.asset('assets/bandi1.png', height: 20)),
         ]),
       ),
       body: Column(children: [
         const SizedBox(height: 0),
-        Image.asset('assets/light3.png', width: 300, height: 300),
+        Image.asset('assets/light2.png', width: 300, height: 300),
         const SizedBox(height: 20),
         Center(child: Column(children: [
           SizedBox(width: 300, height: 80, child: ElevatedButton.icon(
@@ -46,21 +46,21 @@ class ThirdLightScreen extends StatelessWidget {
           const SizedBox(height: 12),
           SizedBox(
             width: 300,
-            height: 60,
+            height: 80,
             child: TextButton(
               style: TextButton.styleFrom(
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.grey.shade200,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                foregroundColor: Colors.white,
+                backgroundColor: const Color(0xFF1F1F1F),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
               ),
               onPressed: () {
                 _subOn = false;
                 CommandService.setSubLight(false);
               },
-              child: const Text("조명 끄기", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+              child: const Text("조명 끄기", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
           SizedBox(width: 300, height: 80, child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFDCC02), foregroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40))),
             

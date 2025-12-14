@@ -3,14 +3,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/material.dart';
 
 class VideoScreen extends StatelessWidget {
   const VideoScreen({super.key});
 
+  // 날짜 포맷팅 (그리드용으로 두 줄 처리 추천)
   String formatTs(int? ts) {
-    if (ts == null) return "날짜 정보 없음";
-    return DateFormat('yyyy년 MM월 dd일 HH:mm').format(
+    if (ts == null) return "날짜 없음";
+    return DateFormat('MM/dd\nHH:mm').format( // 월/일 (줄바꿈) 시:분
       DateTime.fromMillisecondsSinceEpoch(ts * 1000),
     );
   }
@@ -22,28 +22,22 @@ class VideoScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
-        titleSpacing: 0, // 타이틀 영역 여백 제거 (최대한 왼쪽으로 붙임)
+        titleSpacing: 0,
         title: Stack(
           alignment: Alignment.center,
           children: [
-            // [1] 왼쪽 텍스트 (위치 조절 적용)
             Align(
               alignment: Alignment.centerLeft,
               child: Transform.translate(
-                // ★ offset: Offset(x, y) -> x값을 음수로 주면 왼쪽으로 이동합니다.
-                // -5, -10 등으로 숫자를 바꿔서 원하는 위치를 잡으세요.
-                offset: const Offset(-5, 0), 
+                offset: const Offset(-5, 0),
                 child: const Text(
-                  "영상 목록", 
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)
+                  "영상 목록",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
             ),
-            
-            // [2] 가운데 미소 로고
             Padding(
-              // 로고가 정중앙보다 오른쪽으로 치우쳐 보이면 이 숫자를 늘리세요 (예: 45.0 -> 50.0)
-              padding: const EdgeInsets.only(right: 45.0), 
+              padding: const EdgeInsets.only(right: 45.0),
               child: Align(
                 alignment: Alignment.center,
                 child: Image.asset('assets/bandi1.png', height: 20, fit: BoxFit.contain),
@@ -56,7 +50,7 @@ class VideoScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.delete_outline),
-        label: const Text("영상 전체 삭제"),
+        label: const Text("전체 삭제"),
         onPressed: () async {
           final confirmed = await showDialog<bool>(
             context: context,
@@ -73,15 +67,11 @@ class VideoScreen extends StatelessWidget {
             try {
               await FirebaseDatabase.instance.ref('events').remove();
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("영상 목록을 모두 삭제했습니다.")),
-                );
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("영상 목록을 모두 삭제했습니다.")));
               }
             } catch (e) {
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("삭제 실패: $e")),
-                );
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("삭제 실패: $e")));
               }
             }
           }
@@ -94,7 +84,7 @@ class VideoScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
             if (!snapshot.hasData || snapshot.data?.snapshot.value == null) {
-              return const Center(child: Text("저장된 영상이 없습니다.", style: TextStyle(color: Colors.grey)));
+              return const Center(child: Text("저장된 영상이 없습니다.", style: TextStyle(color: Colors.black)));
             }
             final raw = snapshot.data!.snapshot.value as Map;
             final items = raw.entries.map((e) {
@@ -105,32 +95,62 @@ class VideoScreen extends StatelessWidget {
                 'timestamp': (m['timestamp'] is int) ? m['timestamp'] as int : int.tryParse('${m['timestamp']}'),
               };
             }).toList();
+            
+            // ★ 정렬: 최신순 (타임스탬프 큰 게 위로)
             items.sort((a, b) => (b['timestamp'] ?? 0).compareTo(a['timestamp'] ?? 0));
 
             if (items.isEmpty) {
               return const Center(child: Text("저장된 영상이 없습니다.", style: TextStyle(color: Colors.grey)));
             }
 
-            return ListView.builder(
+            // ★ [핵심 변경] ListView -> GridView로 변경
+            return GridView.builder(
+              padding: const EdgeInsets.all(10),
+              // 한 줄에 3개 (crossAxisCount: 3)
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, 
+                crossAxisSpacing: 10, // 가로 간격
+                mainAxisSpacing: 10,  // 세로 간격
+                childAspectRatio: 0.8, // 세로로 약간 긴 비율
+              ),
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final data = items[index];
                 final url = data['url'] ?? '';
                 final ts = data['timestamp'];
-                final filename = data['path'] ?? '알 수 없는 파일';
+                final filename = data['path'] ?? '파일';
 
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  elevation: 1,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    leading: const CircleAvatar(backgroundColor: Colors.black12, child: Icon(Icons.play_arrow, color: Colors.black)),
-                    title: Text(formatTs(ts), style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text(filename, overflow: TextOverflow.ellipsis),
-                    onTap: () {
-                      if (url.isNotEmpty) Navigator.push(context, MaterialPageRoute(builder: (_) => PlayerScreen(url: url, filename: filename)));
-                    },
+                return InkWell(
+                  onTap: () {
+                    if (url.isNotEmpty) {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => PlayerScreen(url: url, filename: filename)));
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200], // 카드 배경색
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // 1. 영상 아이콘 (썸네일 대용)
+                        const Icon(Icons.play_circle_fill, size: 40, color: Colors.black87),
+                        const SizedBox(height: 10),
+                        
+                        // 2. 날짜 시간 표시
+                        Text(
+                          formatTs(ts),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 12, 
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -140,6 +160,7 @@ class VideoScreen extends StatelessWidget {
   }
 }
 
+// PlayerScreen은 변경 없음 (그대로 유지)
 class PlayerScreen extends StatefulWidget {
   final String url;
   final String filename;
@@ -164,9 +185,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
       _vc = VideoPlayerController.networkUrl(Uri.parse(widget.url));
       await _vc.initialize();
       setState(() {
-        _cc = ChewieController(videoPlayerController: _vc, autoPlay: true, looping: false, aspectRatio: _vc.value.aspectRatio);
+        _cc = ChewieController(
+            videoPlayerController: _vc,
+            autoPlay: true,
+            looping: false,
+            aspectRatio: _vc.value.aspectRatio);
       });
-    } catch (e) { print("Error: $e"); }
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   @override
@@ -180,9 +207,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(title: Text(widget.filename), backgroundColor: Colors.transparent, foregroundColor: Colors.white),
+      appBar: AppBar(
+          title: Text(widget.filename),
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.white),
       body: Center(
-        child: _cc != null && _vc.value.isInitialized ? Chewie(controller: _cc!) : const CircularProgressIndicator(color: Colors.white),
+        child: _cc != null && _vc.value.isInitialized
+            ? Chewie(controller: _cc!)
+            : const CircularProgressIndicator(color: Colors.white),
       ),
     );
   }

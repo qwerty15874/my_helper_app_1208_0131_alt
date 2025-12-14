@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class TtsScreen extends StatefulWidget {
   const TtsScreen({super.key});
@@ -17,23 +18,35 @@ class _TtsScreenState extends State<TtsScreen> {
     super.dispose();
   }
 
-  void _sendMessage() {
-    if (_textController.text.trim().isEmpty) return;
+  void _sendMessage() async {
+    final text = _textController.text.trim();
+    if (text.isEmpty) return;
 
-    FirebaseFirestore.instance.collection('speaker').add({
-      'text': _textController.text,
-      'timestamp': FieldValue.serverTimestamp(),
-    });
+    try {
+      await FirebaseFirestore.instance.collection('speaker').add({
+        'text': text,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("초인종으로 전송했습니다! 🔊"),
-        duration: Duration(milliseconds: 800),
-      ),
-    );
-    
-    FocusScope.of(context).unfocus();
-    _textController.clear();
+      // TTS 명령이 서버로 전송되면 남은 작업 플래그를 true로 표시
+      await FirebaseDatabase.instance
+          .ref('status')
+          .update({'tts_remain': true});
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("초인종으로 전송했습니다! 🔊"),
+          duration: Duration(milliseconds: 800),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('전송에 실패했습니다: $e')),
+      );
+    } finally {
+      FocusScope.of(context).unfocus();
+      _textController.clear();
+    }
   }
 
   @override
